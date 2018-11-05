@@ -16,7 +16,6 @@ import { SignedXml, FileKeyInfo } from 'xml-crypto';
 import * as xmlenc from '@passify/xml-encryption';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as Validator from '@passify/xsd-schema-validator';
 import { extract } from './extractor';
 
 const signatureAlgorithms = algorithms.signature;
@@ -103,7 +102,6 @@ export interface LibSamlInterface {
 }
 
 const libSaml = () => {
-  const validator = new Validator();
   function setSchemaDir() {
     let schemaDir;
     try {
@@ -121,9 +119,6 @@ const libSaml = () => {
         throw new Error('ERR_FAILED_FETCH_SCHEMA_FILE');
       }
     }
-    // set schema directory
-    validator.cwd = schemaDir;
-    validator.debug = process.env.NODE_ENV === 'test';
   }
   setSchemaDir();
 
@@ -612,18 +607,7 @@ const libSaml = () => {
      * @desc Check if the xml string is valid and bounded
      */
     async isValidXml(input: string) {
-      return new Promise((resolve, reject) => {
-        validator.validateXML(input, 'saml-schema-protocol-2.0.xsd', (err, result) => {
-          if (err) {
-            console.error(err);
-            return reject('ERR_EXCEPTION_VALIDATE_SAML_RESPONSE');
-          }
-          if (result.valid) {
-            return resolve(true);
-          }
-          return reject('ERR_INVALID_SAML_RESPONSE');
-        });
-      });
+      return true;
     },
   };
 };
